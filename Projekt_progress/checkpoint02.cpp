@@ -62,38 +62,42 @@ double Record::GetTemperature()
 
 */
 
-int main(int argc, char** argv)
+vector<string> load_data_from_input(const char* filename)
 {
-	const string input_file_filename = "input.txt";
-	const string output_file_filename = "output.txt";
-
-	FILE* input_file;
-	fopen_s(&input_file, "input.txt", "r");
-
-
-	vector<string> test;
-	char line[32];
-	while (fgets(line, sizeof(line), input_file)) {
-		test.push_back(line);
+	vector<string> lines;
+	FILE* file;
+	fopen_s(&file, filename, "r");
+	if (file) {
+		char line[32];
+		while (fgets(line, sizeof(line), file)) {
+			lines.push_back(line);
+		}
+		fclose(file);
 	}
+	return lines;
+}
 
-
-	fclose(input_file);
-
-	int records_with_duplicates = test.size();
-
-	for (int i = 0; i < test.size(); i++)
-	{
-		for (int j = i + 1; j < test.size(); j++)
-		{
-			if (test[i] == test[j])
-			{
-				test.erase(test.begin() + j);
+void removeDuplicates(vector<string>& vec) {
+	for (int i = 0; i < vec.size(); i++) {
+		for (int j = i + 1; j < vec.size(); j++) {
+			if (vec[i] == vec[j]) {
+				vec.erase(vec.begin() + j);
 				j = i;
 			}
 		}
 	}
+}
 
+
+int main()
+{
+	const char* input_file_filename = "input.txt";
+	const char* output_file_filename = "output.txt";
+
+	vector<string> test = load_data_from_input(input_file_filename);
+	int records_with_duplicates = test.size();
+
+	removeDuplicates(test);
 	int records_without_duplicates = test.size();
 
 	cout << records_with_duplicates << endl;
